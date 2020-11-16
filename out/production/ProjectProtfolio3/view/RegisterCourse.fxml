@@ -13,6 +13,7 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.AreaChart?>
 <BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.2"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
     <left>
@@ -142,7 +143,7 @@
                 <LineChart fx:id="chartCourse" title="Student Statistics" BorderPane.alignment="CENTER"
                            prefHeight="400" prefWidth="400">
                     <xAxis>
-                        <CategoryAxis side="BOTTOM" label="Course"/>
+                        <CategoryAxis side="BOTTOM" label="Student"/>
                     </xAxis>
                     <yAxis>
                         <NumberAxis side="LEFT" label="Grade" />

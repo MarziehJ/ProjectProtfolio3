@@ -7,10 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
@@ -31,8 +28,10 @@ public class Controller {
 
     private ObservableList<XYChart.Series> studentDataSeries = FXCollections.observableArrayList();
     private ObservableList<XYChart.Data> studentData = FXCollections.observableArrayList();
+
     private ObservableList<XYChart.Series> courseDataSeries = FXCollections.observableArrayList();
     private ObservableList<XYChart.Data> courseData = FXCollections.observableArrayList();
+    private ObservableList<XYChart.Data> courseAvgData = FXCollections.observableArrayList();
 
     public BarChart chartStudent;
     public LineChart chartCourse;
@@ -64,10 +63,12 @@ public class Controller {
     }
 
     private void InitializeChartsData() {
+
         studentDataSeries.add(new XYChart.Series("Grades", studentData));
         chartStudent.setData(studentDataSeries);
 
         courseDataSeries.add(new XYChart.Series("Grades", courseData));
+        courseDataSeries.add(new XYChart.Series("Average", courseAvgData));
         chartCourse.setData(courseDataSeries);
     }
 
@@ -150,9 +151,10 @@ public class Controller {
                 {
 
                     if (newSelected != null) {
+                        String courseInfo = ((StudentGrade) newSelected).getCourseInfo();
                         int courseId = ((StudentGrade) newSelected).getCourseId();
                         int semesterId = ((StudentGrade) newSelected).getSemesterId();
-                        UpdateCourseGradeInfo(courseId, semesterId);
+                        UpdateCourseGradeInfo(courseId, semesterId, courseInfo);
                     }
                 })
         );
@@ -187,39 +189,52 @@ public class Controller {
     private void UpdateStudentStatistics(int studentId) {
         if (studentId != -1) {
             List<StudentGrade> allStudentGrads = model.getRegisteredCoursed(studentId, -1, -1);
-            studentDataSeries.removeAll();
-            for (StudentGrade studentGrade:allStudentGrads) {
-                studentData.add(new XYChart.Data(studentGrade.getCourseName(), studentGrade.getGrade()));
+            studentData.clear();
+
+
+            for (StudentGrade studentGrade : allStudentGrads) {
+                if (studentGrade.getGrade() != null)
+                    studentData.add(new XYChart.Data(studentGrade.getCourseName(), studentGrade.getGrade()));
             }
         }
 
     }
 
-    private void UpdateCourseStatistics(int courseId) {
+    private void UpdateCourseStatistics(int courseId, Float average) {
         if (courseId != -1) {
             List<StudentGrade> allStudentGrads = model.getRegisteredCoursed(-1, -1, courseId);
-            courseDataSeries.removeAll();
-            for (StudentGrade studentGrade:allStudentGrads) {
-                courseData.add(new XYChart.Data(studentGrade.getStudentName(), studentGrade.getGrade()));
+
+
+            courseData.clear();
+            courseAvgData.clear();
+
+           for (StudentGrade studentGrade : allStudentGrads) {
+                if (studentGrade.getGrade() != null)
+                    courseData.add(new XYChart.Data(studentGrade.getStudentName(), studentGrade.getGrade()));
+                if (average != null)
+                    courseAvgData.add(new XYChart.Data(studentGrade.getStudentName(), average));
             }
         }
 
     }
-    private void UpdateCourseGradeInfo(int courseId, int semesterId) {
+
+    private void UpdateCourseGradeInfo(int courseId, int semesterId, String courseInfo) {
         txtCourseOverallAverage.clear();
         txtCourseSemesterAverage.clear();
+        txtCourseInfo.clear();
 
         Float overallAvg = model.getOverallCourseAverage(courseId);
         Float semesterAvg = model.getSemeterCourseAverage(courseId, semesterId);
+        txtCourseInfo.setText(courseInfo);
+
 
         if (overallAvg != null)
             txtCourseOverallAverage.setText(Float.toString(overallAvg));
         if (semesterAvg != null)
             txtCourseSemesterAverage.setText(Float.toString(semesterAvg));
-        UpdateCourseStatistics(courseId);
+        UpdateCourseStatistics(courseId, overallAvg);
 
     }
-
 
 
     public void UpdateGrade(ActionEvent actionEvent) {

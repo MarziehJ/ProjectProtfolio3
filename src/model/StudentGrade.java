@@ -52,7 +52,7 @@ public class StudentGrade {
         return teacherName;
     }
 
-    public  String getCourseInfo() { return  String.format("%s %s", courseName, teacherName);}
+    public  String getCourseInfo() { return  String.format("%s %s teacher: %s", courseName, getSemesterName(), teacherName);}
 
     public String getStudentName() {
         return studentName;
