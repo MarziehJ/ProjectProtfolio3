@@ -35,24 +35,46 @@ insert into Semester(id, name, year) values(3, "spring", "2020");
 insert into Semester(id, name, year) values(4, "autum", "2020");
 
 
-insert into Course(id, name, teacherName, semesterId, ECTS) values(1, "Software Development(SD)", "Line", 2, 10); 
-insert into Course(id, name, teacherName, semesterId, ECTS) values(2, "Software Development(SD)", "Line", 3, 10); 
-insert into Course(id, name, teacherName, semesterId, ECTS) values(3, "ES1", "Ebbe", 2, 10);
+insert into Course(id, name, teacherName, semesterId, ECTS) values(1, "SD", "Line", 2, 10); -- autum 2019
+insert into Course(id, name, teacherName, semesterId, ECTS) values(2, "SD", "Line", 3, 10); -- spring 2020
+insert into Course(id, name, teacherName, semesterId, ECTS) values(3, "ES1", "Ebbe", 2, 10); -- autum 2019
 
 insert into studentGrade(studentId, courseId, grade) values(1, 1, 12);
-insert into studentGrade(studentId, courseId, grade) values(1, 3, 10);						
+insert into studentGrade(studentId, courseId, grade) values(1, 3, 10);		
+				
 insert into studentGrade(studentId, courseId, grade) values(2, 2, null);
 insert into studentGrade(studentId, courseId, grade) values(2, 3, 12);
+
 insert into studentGrade(studentId, courseId, grade) values(3, 2, null);
 insert into studentGrade(studentId, courseId, grade) values(3, 3, 2);
-insert into studentGrade(studentId, courseId, grade) values(4, 1, 10);
-insert into studentGrade(studentId, courseId, grade) values(4, 2, 7);
 
+insert into studentGrade(studentId, courseId, grade) values(4, 2, null);
+insert into studentGrade(studentId, courseId, grade) values(4, 3, 2);
+
+insert into studentGrade(studentId, courseId, grade) values(5, 1, 10);
+insert into studentGrade(studentId, courseId, grade) values(5, 3, 7);
+
+insert into studentGrade(studentId, courseId, grade) values(6, 2, null);
+insert into studentGrade(studentId, courseId, grade) values(6, 3, 10);
+
+
+insert into studentGrade(studentId, courseId, grade) values(7, 1, 4);
+insert into studentGrade(studentId, courseId, grade) values(7, 3, 12);
+
+insert into studentGrade(studentId, courseId, grade) values(8, 2, null);
+insert into studentGrade(studentId, courseId, grade) values(8, 3, 12);
+
+insert into studentGrade(studentId, courseId, grade) values(9, 1, 12);
+insert into studentGrade(studentId, courseId, grade) values(9, 3, 12);
+
+
+insert into studentGrade(studentId, courseId, grade) values(10, 2, null);
+insert into studentGrade(studentId, courseId, grade) values(10, 3, 7);
 
 DROP VIEW vwStudentGrade; 
 
 CREATE VIEW IF NOT EXISTS vwStudentGrade AS
-	SELECT SG.studentId, S.name +S.LastName StudentName, C.semesterId, SG.courseId, C.Name as CourseName, C.teacherName, ECTS, grade 
+	SELECT SG.studentId, S.name ||' '||S.LastName StudentName, SE.Name||' '||SE.Year AS SemesterName, C.semesterId, SG.courseId, C.Name as CourseName, C.teacherName, ECTS, grade 
 	FROM studentGrade AS SG
 	INNER JOIN Course AS C ON C.id = SG.CourseId
 	INNER JOIN Student AS S ON S.id = SG.StudentId	

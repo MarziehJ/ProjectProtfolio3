@@ -101,7 +101,10 @@ public class RegisterCourseModel {
             "SELECT studentId, studentName, SemesterName, semesterId, courseId, courseName, teacherName, ECTS, grade " +
                     "FROM vwStudentGrade  " +
                     "WHERE StudentId = ? ";
-
+    private static String getCoursedGradsSQL =
+            "SELECT studentId, studentName, SemesterName, semesterId, courseId, courseName, teacherName, ECTS, grade " +
+                    "FROM vwStudentGrade  " +
+                    "WHERE CourseId = ? ";
     private static String getSemesterAverageSQL =
             "SELECT CAST(SUM(CASE WHEN grade IS NULL THEN 0 ELSE grade*ECTS END) AS FLOAT) " +
                     "  /(SUM(CASE WHEN grade IS NULL THEN 0 ELSE ECTS END))  AS AvgGrage " +
@@ -125,18 +128,24 @@ public class RegisterCourseModel {
                     "  /(SUM(CASE WHEN grade IS NULL THEN 0 ELSE ECTS END))  AS AvgGrage " +
                     "FROM vwStudentGrade AS SG " +
                     "WHERE CourseId = ? ";
+    private static String updateStudentGradeSQL =
+            "UPDATE Studentgrade SET Grade = ? WHERE studentId = ? AND courseId = ?";
 
-    public List<StudentGrade> getRegisteredCoursed(int studentId, int semesterId) {
+    public List<StudentGrade> getRegisteredCoursed(int studentId, int semesterId, int courseId) {
         ArrayList result = new ArrayList();
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
             conn = connect();
-            String sql = semesterId == -1 ? getRegisteredAllCoursedSQL : getRegisteredSemsterCoursedSQL;
+            String sql = courseId != -1 ? getCoursedGradsSQL :
+                    (semesterId == -1 ? getRegisteredAllCoursedSQL : getRegisteredSemsterCoursedSQL);
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, studentId);
+            if (studentId != -1)
+                stmt.setInt(1, studentId);
             if (semesterId != -1)
                 stmt.setInt(2, semesterId);
+            if (courseId != -1)
+                stmt.setInt(1, courseId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Integer grade = null;
@@ -294,5 +303,31 @@ public class RegisterCourseModel {
     }
 
 
+    public int UpdateStudentGrade(int studentId, int courseId, int grade) {
+        int result = 0;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = connect();
+            stmt = conn.prepareStatement(updateStudentGradeSQL);
+            stmt.setInt(1, grade);
+            stmt.setInt(2, studentId);
+            stmt.setInt(3, courseId);
+            result = stmt.executeUpdate();
+            conn.close();
+            stmt.close();;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
 }
 

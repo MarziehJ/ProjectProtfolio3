@@ -19,7 +19,7 @@ public class Main extends Application {
         Controller controller = loader.getController();
         controller.setModel(model);
         primaryStage.setTitle("Student Register Course System");
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(new Scene(root, 1200, 800));
         primaryStage.show();
     }
 

@@ -3,12 +3,18 @@ package controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import model.Semester;
 import model.RegisterCourseModel;
 import model.Student;
@@ -16,15 +22,23 @@ import model.StudentGrade;
 import view.StudentGradeView;
 
 import java.net.UnknownHostException;
+import java.util.List;
 
 public class Controller {
     public ObservableList<Student> studentList = FXCollections.observableArrayList();
     public ObservableList<Semester> semesterList = FXCollections.observableArrayList();
     public ObservableList<StudentGrade> gradeList = FXCollections.observableArrayList();
 
+    private ObservableList<XYChart.Series> studentDataSeries = FXCollections.observableArrayList();
+    private ObservableList<XYChart.Data> studentData = FXCollections.observableArrayList();
+    private ObservableList<XYChart.Series> courseDataSeries = FXCollections.observableArrayList();
+    private ObservableList<XYChart.Data> courseData = FXCollections.observableArrayList();
+
+    public BarChart chartStudent;
+    public LineChart chartCourse;
 
     public TableColumn studentColumnName, studentColumnLastName, studentColumnCity;
-    public TableColumn gradeColumnCourse, gradeColumnECTS, gradeColumnGrade, gradeColumnTeacher;
+    public TableColumn gradeColumnCourse, gradeColumnECTS, gradeColumnGrade, gradeColumnTeacher, gradeColumnSemester;
 
     public TableView tableViewStudent;
     public TableView tableViewGrade;
@@ -32,9 +46,10 @@ public class Controller {
     public TextField txtSemesterAverage, txtOverallAverage, txtCourseSemesterAverage, txtCourseOverallAverage, txtCourseInfo;
     public Button buttonUpdateGrade;
 
+
     public RegisterCourseModel model;
-    public void setModel( RegisterCourseModel model)
-    {
+
+    public void setModel(RegisterCourseModel model) {
         this.model = model;
         initializeLists();
 
@@ -44,6 +59,16 @@ public class Controller {
         InitializeStudentList();
         InitializeSemesterList();
         InitializeStudentGradeList();
+        InitializeChartsData();
+        tableViewStudent.getSelectionModel().selectFirst();
+    }
+
+    private void InitializeChartsData() {
+        studentDataSeries.add(new XYChart.Series("Grades", studentData));
+        chartStudent.setData(studentDataSeries);
+
+        courseDataSeries.add(new XYChart.Series("Grades", courseData));
+        chartCourse.setData(courseDataSeries);
     }
 
 
@@ -84,6 +109,7 @@ public class Controller {
 
         tableViewStudent.setItems(studentList);
 
+
         tableViewStudent.getSelectionModel().selectedItemProperty().addListener(
                 ((observableValue, oldSelected, newSelected) ->
                 {
@@ -102,19 +128,21 @@ public class Controller {
         gradeColumnCourse.setCellValueFactory(
                 new PropertyValueFactory<StudentGrade, String>("CourseName")
         );
+        gradeColumnSemester.setCellValueFactory(
+                new PropertyValueFactory<StudentGrade, String>("semesterName")
+        );
         gradeColumnTeacher.setCellValueFactory(
                 new PropertyValueFactory<StudentGrade, String>("TeacherName")
         );
         gradeColumnECTS.setCellValueFactory(
-                new PropertyValueFactory<Student, String>("ECTS")
+                new PropertyValueFactory<StudentGrade, String>("ECTS")
         );
         gradeColumnGrade.setCellValueFactory(
-                new PropertyValueFactory<Student, String>("grade")
+                new PropertyValueFactory<StudentGrade, String>("grade")
         );
 
+
         tableViewGrade.setItems(gradeList);
-
-
 
 
         tableViewGrade.getSelectionModel().selectedItemProperty().addListener(
@@ -140,8 +168,7 @@ public class Controller {
         txtCourseInfo.clear();
 
 
-
-        gradeList.addAll(model.getRegisteredCoursed(studentId, semesterId));
+        gradeList.addAll(model.getRegisteredCoursed(studentId, semesterId, -1));
         Float overallAvg = model.getOverallAverage(studentId);
         Float semesterAvg = model.getSemeterAverage(studentId, semesterId);
 
@@ -150,9 +177,34 @@ public class Controller {
         if (semesterAvg != null)
             txtSemesterAverage.setText(Float.toString(semesterAvg));
 
+        tableViewGrade.getSelectionModel().selectFirst();
         buttonUpdateGrade.setDisable(gradeList.isEmpty());
+
+        UpdateStudentStatistics(studentId);
+
     }
 
+    private void UpdateStudentStatistics(int studentId) {
+        if (studentId != -1) {
+            List<StudentGrade> allStudentGrads = model.getRegisteredCoursed(studentId, -1, -1);
+            studentDataSeries.removeAll();
+            for (StudentGrade studentGrade:allStudentGrads) {
+                studentData.add(new XYChart.Data(studentGrade.getCourseName(), studentGrade.getGrade()));
+            }
+        }
+
+    }
+
+    private void UpdateCourseStatistics(int courseId) {
+        if (courseId != -1) {
+            List<StudentGrade> allStudentGrads = model.getRegisteredCoursed(-1, -1, courseId);
+            courseDataSeries.removeAll();
+            for (StudentGrade studentGrade:allStudentGrads) {
+                courseData.add(new XYChart.Data(studentGrade.getStudentName(), studentGrade.getGrade()));
+            }
+        }
+
+    }
     private void UpdateCourseGradeInfo(int courseId, int semesterId) {
         txtCourseOverallAverage.clear();
         txtCourseSemesterAverage.clear();
@@ -164,16 +216,30 @@ public class Controller {
             txtCourseOverallAverage.setText(Float.toString(overallAvg));
         if (semesterAvg != null)
             txtCourseSemesterAverage.setText(Float.toString(semesterAvg));
+        UpdateCourseStatistics(courseId);
+
     }
 
+
+
     public void UpdateGrade(ActionEvent actionEvent) {
+
+        StudentGrade studentGrade = (StudentGrade) tableViewGrade.getSelectionModel().getSelectedItem();
         Stage stage = new Stage();
-        StudentGradeController controller = new StudentGradeController(model, (StudentGrade)tableViewGrade.getSelectionModel().getSelectedItem());
+        StudentGradeController controller = new StudentGradeController(model, studentGrade);
         StudentGradeView view = new StudentGradeView(controller);
+        controller.setView(view);
 
         stage.setTitle("Update Student Grade Form");
-        stage.setScene(new Scene(view.asParent(), 300, 300));
+        stage.setScene(new Scene(view.asParent(), 340, 250));
         stage.show();
+        stage.setOnHiding(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                UpdateStudentGradeInfo(studentGrade.getStudentId(), ((Semester) comboBoxSemester.getValue()).getId());
+            }
+        });
+
 
     }
 }
