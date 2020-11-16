@@ -1,0 +1,135 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
+    <top>
+        <BorderPane BorderPane.alignment="CENTER" prefHeight="200.0">
+            <top>
+                <Label text="Student Data:"/>
+            </top>
+            <center>
+                <TableView fx:id="tableViewStudent" prefHeight="150.0"
+                           BorderPane.alignment="CENTER" GridPane.rowIndex="1">
+                    <columns>
+                        <TableColumn fx:id="studentColumnName" prefWidth="150.0" text="Name"/>
+                        <TableColumn fx:id="studentColumnLastName" prefWidth="150.0" text="Last Name"/>
+                        <TableColumn fx:id="studentColumnCity" prefWidth="150.0" text="From"/>
+                    </columns>
+                </TableView>
+            </center>
+            <bottom>
+                <FlowPane prefWidth="800.0" BorderPane.alignment="CENTER" GridPane.rowIndex="2">
+                    <children>
+                        <Label text="Semester:">
+                            <FlowPane.margin>
+                                <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                            </FlowPane.margin>
+                        </Label>
+                        <ComboBox prefWidth="100" fx:id="comboBoxSemester">
+                            <FlowPane.margin>
+                                <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                            </FlowPane.margin>
+                        </ComboBox>
+                        <FlowPane prefWidth="600.0">
+                            <Button mnemonicParsing="false" text="Add Student">
+                                <FlowPane.margin>
+                                    <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                                </FlowPane.margin>
+                            </Button>
+                            <Button mnemonicParsing="false" text="Add Semester">
+                                <FlowPane.margin>
+                                    <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                                </FlowPane.margin>
+                            </Button>
+                            <Button mnemonicParsing="false" text="Add Course">
+                                <FlowPane.margin>
+                                    <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                                </FlowPane.margin>
+                            </Button>
+                            <Button mnemonicParsing="false" text="Register Student to Course">
+                                <FlowPane.margin>
+                                    <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                                </FlowPane.margin>
+                            </Button>
+                        </FlowPane>
+                    </children>
+                </FlowPane>
+            </bottom>
+        </BorderPane>
+    </top>
+    <center>
+        <TableView fx:id="tableViewGrade" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"
+                   GridPane.rowIndex="1">
+            <columns>
+                <TableColumn fx:id="gradeColumnCourse" prefWidth="200.0" text="Course"/>
+                <TableColumn fx:id="gradeColumnTeacher" prefWidth="200.0" text="Teacher"/>
+                <TableColumn fx:id="gradeColumnECTS" prefWidth="75.0" text="ECTS"/>
+                <TableColumn fx:id="gradeColumnGrade" prefWidth="100.0" text="Grade"/>
+            </columns>
+        </TableView>
+    </center>
+    <bottom>
+        <GridPane BorderPane.alignment="CENTER">
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <FlowPane prefWidth="800.0" BorderPane.alignment="CENTER" GridPane.rowIndex="1">
+                <children>
+                    <Label text="Semester Average:">
+                        <FlowPane.margin>
+                            <Insets bottom="10.0" left="50.0" right="5.0" top="5.0"/>
+                        </FlowPane.margin>
+                    </Label>
+                    <TextField fx:id="txtSemesterAverage" prefHeight="27.0" prefWidth="100.0" editable="false" />
+                    <Label text="Overall Average:">
+                        <FlowPane.margin>
+                            <Insets bottom="10.0" left="50.0" right="5.0" top="5.0"/>
+                        </FlowPane.margin>
+                    </Label>
+                    <TextField fx:id="txtOverallAverage" prefHeight="27.0" prefWidth="100.0" editable="false" />
+                    <Button mnemonicParsing="false" text="Update Grade" fx:id="buttonUpdateGrade" onAction="#UpdateGrade">
+                        <FlowPane.margin>
+                            <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                        </FlowPane.margin>
+                    </Button>
+                </children>
+            </FlowPane>
+            <FlowPane prefWidth="800.0" BorderPane.alignment="CENTER" GridPane.rowIndex="2">
+                <children>
+                    <Label text="Course:">
+                        <FlowPane.margin>
+                            <Insets bottom="10.0" left="108.0" right="5.0" top="5.0"/>
+                        </FlowPane.margin>
+                    </Label>
+                    <TextField fx:id="txtCourseInfo" prefHeight="27.0" prefWidth="343.0" editable="false" />
+                </children>
+            </FlowPane>
+            <FlowPane prefWidth="800.0" BorderPane.alignment="CENTER" GridPane.rowIndex="3">
+                <children>
+                    <Label text="Course Semester Average:">
+                        <FlowPane.margin>
+                            <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                        </FlowPane.margin>
+                    </Label>
+                    <TextField fx:id="txtCourseSemesterAverage" prefHeight="27.0" prefWidth="100.0" editable="false"  />
+                    <Label text="Course Overall Average:">
+                        <FlowPane.margin>
+                            <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                        </FlowPane.margin>
+                    </Label>
+                    <TextField fx:id="txtCourseOverallAverage" prefHeight="27.0" prefWidth="100.0" editable="false" />
+                </children>
+            </FlowPane>
+        </GridPane>
+    </bottom>
+</BorderPane>

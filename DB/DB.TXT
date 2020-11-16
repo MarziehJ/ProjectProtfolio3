@@ -1,0 +1,67 @@
+create table student(id int not null primary key, 
+					name varchar(100) not null, 
+					lastName varchar(100)  not null, 
+					city varchar(100));
+create table semester(id int not null primary key, 
+					name varchar(50) not null, 
+					year smallint not null);
+create table course(id int not null primary key, 
+					name varchar(100) not null, 
+					teacheName varchar(100) not null,
+					semesterId int not null, 
+					ECTS smallint,
+					FOREIGN KEY(semesterId) REFERENCES semester(id));
+create table studentGrade(studentId int not null, 
+						 courseId int not null, 
+						 grade smallint, 
+						 PRIMARY KEY (studentId, courseId), 
+						 FOREIGN KEY(studentId) REFERENCES student(id),
+						 FOREIGN KEY(courseId) REFERENCES course(id));
+						 
+insert into student(id, name, lastName, city) values(1, "Aisha", "Lincoln", "Nykøbing F");
+insert into student(id, name, lastName, city) values(2, "Anya", "Nielsen", "Nykøbing F");
+insert into student(id, name, lastName, city) values(3, "Alfred", "Jensen", "Camas");
+insert into student(id, name, lastName, city) values(4, "Berta", "Bertelsen", "Billund");
+insert into student(id, name, lastName, city) values(5, "Albert", "Antonsen", "Sorø");
+insert into student(id, name, lastName, city) values(6, "Eske", "Eriksen", "Eskildstrup");
+insert into student(id, name, lastName, city) values(7, "Olaf", "Olesen", "Odense");
+insert into student(id, name, lastName, city) values(8, "Salma", "Simonsen", "Stockholm");
+insert into student(id, name, lastName, city) values(9, "Theis", "Thomasen", "Tølløse");
+insert into student(id, name, lastName, city) values(10, "Janet", "Jensen", "Jyllinge");
+
+insert into Semester(id, name, year) values(1, "spring", "2019");
+insert into Semester(id, name, year) values(2, "autum", "2019");
+insert into Semester(id, name, year) values(3, "spring", "2020");
+insert into Semester(id, name, year) values(4, "autum", "2020");
+
+
+insert into Course(id, name, teacherName, semesterId, ECTS) values(1, "Software Development(SD)", "Line", 2, 10); 
+insert into Course(id, name, teacherName, semesterId, ECTS) values(2, "Software Development(SD)", "Line", 3, 10); 
+insert into Course(id, name, teacherName, semesterId, ECTS) values(3, "ES1", "Ebbe", 2, 10);
+
+insert into studentGrade(studentId, courseId, grade) values(1, 1, 12);
+insert into studentGrade(studentId, courseId, grade) values(1, 3, 10);						
+insert into studentGrade(studentId, courseId, grade) values(2, 2, null);
+insert into studentGrade(studentId, courseId, grade) values(2, 3, 12);
+insert into studentGrade(studentId, courseId, grade) values(3, 2, null);
+insert into studentGrade(studentId, courseId, grade) values(3, 3, 2);
+insert into studentGrade(studentId, courseId, grade) values(4, 1, 10);
+insert into studentGrade(studentId, courseId, grade) values(4, 2, 7);
+
+
+DROP VIEW vwStudentGrade; 
+
+CREATE VIEW IF NOT EXISTS vwStudentGrade AS
+	SELECT SG.studentId, S.name +S.LastName StudentName, C.semesterId, SG.courseId, C.Name as CourseName, C.teacherName, ECTS, grade 
+	FROM studentGrade AS SG
+	INNER JOIN Course AS C ON C.id = SG.CourseId
+	INNER JOIN Student AS S ON S.id = SG.StudentId	
+	INNER JOIN Semester AS SE ON SE.id = C.semesterId;
+
+
+Select * from vwStudentGrade;
+
+
+SELECT studentId, semesterId, courseId, C.Name as CourseName, ECTS, grade 
+FROM studentGrade AS SG
+INNER JOIN Course AS C ON C.id = SG.CourseId WHERE StudentId = 1 AND SemesterId = 1
