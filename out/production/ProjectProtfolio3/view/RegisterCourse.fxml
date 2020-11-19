@@ -107,20 +107,14 @@
                     </FlowPane>
                     <FlowPane prefWidth="800.0" BorderPane.alignment="CENTER" GridPane.rowIndex="3">
                         <children>
-                            <Label text="Course Semester Average:">
+                            <Label text="Course Average:">
                                 <FlowPane.margin>
-                                    <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
+                                    <Insets bottom="10.0" left="62.0" right="5.0" top="5.0"/>
                                 </FlowPane.margin>
                             </Label>
-                            <TextField fx:id="txtCourseSemesterAverage" prefHeight="27.0" prefWidth="100.0"
+                            <TextField fx:id="txtCourseAverage" prefHeight="27.0" prefWidth="100.0"
                                        editable="false"/>
-                            <Label text="Course Overall Average:">
-                                <FlowPane.margin>
-                                    <Insets bottom="10.0" left="10.0" right="5.0" top="5.0"/>
-                                </FlowPane.margin>
-                            </Label>
-                            <TextField fx:id="txtCourseOverallAverage" prefHeight="27.0" prefWidth="100.0"
-                                       editable="false"/>
+
                         </children>
                     </FlowPane>
                 </GridPane>
@@ -140,7 +134,7 @@
                 </BarChart>
             </top>
             <center>
-                <LineChart fx:id="chartCourse" title="Student Statistics" BorderPane.alignment="CENTER"
+                <LineChart fx:id="chartCourse" title="Course Statistics" BorderPane.alignment="CENTER"
                            prefHeight="400" prefWidth="400">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" label="Student"/>

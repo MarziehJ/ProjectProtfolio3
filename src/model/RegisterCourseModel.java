@@ -116,13 +116,6 @@ public class RegisterCourseModel {
                     "  /(SUM(CASE WHEN grade IS NULL THEN 0 ELSE ECTS END))  AS AvgGrage " +
                     "FROM vwStudentGrade AS SG " +
                     "WHERE StudentId = ? ";
-
-    private static String getSemesterCourseAverageSQL =
-            "SELECT CAST(SUM(CASE WHEN grade IS NULL THEN 0 ELSE grade*ECTS END) AS FLOAT) " +
-                    "  /(SUM(CASE WHEN grade IS NULL THEN 0 ELSE ECTS END))  AS AvgGrage " +
-                    "FROM vwStudentGrade AS SG " +
-                    "WHERE CourseId = ? AND SemesterId = ?";
-
     private static String getOverallCourseAverageSQL =
             "SELECT CAST(SUM(CASE WHEN grade IS NULL THEN 0 ELSE grade*ECTS END) AS FLOAT)  " +
                     "  /(SUM(CASE WHEN grade IS NULL THEN 0 ELSE ECTS END))  AS AvgGrage " +
@@ -131,6 +124,7 @@ public class RegisterCourseModel {
     private static String updateStudentGradeSQL =
             "UPDATE Studentgrade SET Grade = ? WHERE studentId = ? AND courseId = ?";
 
+    //When any of input parameters equal to -1, it will ignor in SQL statement and won't filter by that parameter
     public List<StudentGrade> getRegisteredCoursed(int studentId, int semesterId, int courseId) {
         ArrayList result = new ArrayList();
         Connection conn = null;
@@ -242,38 +236,6 @@ public class RegisterCourseModel {
         return result;
     }
 
-    public Float getSemeterCourseAverage(int courseId, int semesterId) {
-        if (semesterId == -1)
-            return null;
-
-        Float result = null;
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = connect();
-            stmt = conn.prepareStatement(getSemesterCourseAverageSQL);
-            stmt.setInt(1, courseId);
-            stmt.setInt(2, semesterId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.getObject("AvgGrage") != null)
-                result = rs.getFloat("AvgGrage");
-            conn.close();
-            stmt.close();
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return result;
-    }
-
     public Float getOverallCourseAverage(int courseId) {
         Float result = null;
         Connection conn = null;
@@ -301,7 +263,6 @@ public class RegisterCourseModel {
         }
         return result;
     }
-
 
     public int UpdateStudentGrade(int studentId, int courseId, int grade) {
         int result = 0;

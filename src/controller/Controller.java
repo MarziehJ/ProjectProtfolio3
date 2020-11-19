@@ -42,7 +42,7 @@ public class Controller {
     public TableView tableViewStudent;
     public TableView tableViewGrade;
     public ComboBox comboBoxSemester;
-    public TextField txtSemesterAverage, txtOverallAverage, txtCourseSemesterAverage, txtCourseOverallAverage, txtCourseInfo;
+    public TextField txtSemesterAverage, txtOverallAverage, txtCourseAverage, txtCourseInfo;
     public Button buttonUpdateGrade;
 
 
@@ -165,8 +165,7 @@ public class Controller {
         gradeList.clear();
         txtOverallAverage.clear();
         txtSemesterAverage.clear();
-        txtCourseOverallAverage.clear();
-        txtCourseSemesterAverage.clear();
+        txtCourseAverage.clear();
         txtCourseInfo.clear();
 
 
@@ -219,19 +218,16 @@ public class Controller {
     }
 
     private void UpdateCourseGradeInfo(int courseId, int semesterId, String courseInfo) {
-        txtCourseOverallAverage.clear();
-        txtCourseSemesterAverage.clear();
+        txtCourseAverage.clear();
         txtCourseInfo.clear();
 
         Float overallAvg = model.getOverallCourseAverage(courseId);
-        Float semesterAvg = model.getSemeterCourseAverage(courseId, semesterId);
         txtCourseInfo.setText(courseInfo);
 
 
         if (overallAvg != null)
-            txtCourseOverallAverage.setText(Float.toString(overallAvg));
-        if (semesterAvg != null)
-            txtCourseSemesterAverage.setText(Float.toString(semesterAvg));
+            txtCourseAverage.setText(Float.toString(overallAvg));
+
         UpdateCourseStatistics(courseId, overallAvg);
 
     }

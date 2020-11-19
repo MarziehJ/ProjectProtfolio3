@@ -37,7 +37,7 @@ insert into Semester(id, name, year) values(4, "autum", "2020");
 
 insert into Course(id, name, teacherName, semesterId, ECTS) values(1, "SD", "Line", 2, 10); -- autum 2019
 insert into Course(id, name, teacherName, semesterId, ECTS) values(2, "SD", "Line", 3, 10); -- spring 2020
-insert into Course(id, name, teacherName, semesterId, ECTS) values(3, "ES1", "Ebbe", 2, 10); -- autum 2019
+insert into Course(id, name, teacherName, semesterId, ECTS) values(3, "ES1", "Ebbe", 2, 5); -- autum 2019
 
 insert into studentGrade(studentId, courseId, grade) values(1, 1, 12);
 insert into studentGrade(studentId, courseId, grade) values(1, 3, 10);		
@@ -71,7 +71,6 @@ insert into studentGrade(studentId, courseId, grade) values(9, 3, 12);
 insert into studentGrade(studentId, courseId, grade) values(10, 2, null);
 insert into studentGrade(studentId, courseId, grade) values(10, 3, 7);
 
-DROP VIEW vwStudentGrade; 
 
 CREATE VIEW IF NOT EXISTS vwStudentGrade AS
 	SELECT SG.studentId, S.name ||' '||S.LastName StudentName, SE.Name||' '||SE.Year AS SemesterName, C.semesterId, SG.courseId, C.Name as CourseName, C.teacherName, ECTS, grade 
@@ -81,9 +80,3 @@ CREATE VIEW IF NOT EXISTS vwStudentGrade AS
 	INNER JOIN Semester AS SE ON SE.id = C.semesterId;
 
 
-Select * from vwStudentGrade;
-
-
-SELECT studentId, semesterId, courseId, C.Name as CourseName, ECTS, grade 
-FROM studentGrade AS SG
-INNER JOIN Course AS C ON C.id = SG.CourseId WHERE StudentId = 1 AND SemesterId = 1
